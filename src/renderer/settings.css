@@ -222,6 +222,32 @@ input.editable:focus {
 }
 .btn-remove:hover { color: #d32f2f; background: rgba(211,47,47,0.08); }
 
+/* ─── Separator row ──────────────────────────────────────────────────────── */
+.item-row-separator {
+  grid-template-columns: 18px 1fr auto auto;
+  align-items: center;
+  padding: 8px 4px;
+}
+
+.separator-line {
+  height: 1px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 1px;
+}
+
+.separator-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(0,0,0,0.35);
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+body.dark .separator-line  { background: rgba(255,255,255,0.15); }
+body.dark .separator-label { color: rgba(255,255,255,0.35); }
+
 /* ─── Utility ─────────────────────────────────────────────────────────────── */
 .hidden { display: none !important; }
 

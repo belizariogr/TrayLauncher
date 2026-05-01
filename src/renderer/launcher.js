@@ -24,6 +24,14 @@ async function renderItems() {
 
   // Icons are embedded in config items as iconDataUrl (pre-extracted at add time)
   config.items.forEach((item) => {
+    if (item.type === 'separator') {
+      if (config.viewMode === 'list') {
+        const sep = document.createElement('div');
+        sep.className = 'item-separator';
+        grid.appendChild(sep);
+      }
+      return;
+    }
     const el = buildItem(item, item.iconDataUrl);
     grid.appendChild(el);
   });

@@ -127,6 +127,14 @@ body.light {
   white-space: nowrap;
 }
 
+/* ── Separator ── */
+.item-separator {
+  height: 1px;
+  background: var(--border);
+  margin: 3px 4px;
+  flex-shrink: 0;
+}
+
 /* ── Empty state ── */
 .empty-state {
   display: flex;

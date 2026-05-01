@@ -15,6 +15,7 @@ async function init() {
   document.getElementById('btn-list').addEventListener('click', () => setViewMode('list'));
   document.getElementById('btn-add-file').addEventListener('click', () => addItem('file'));
   document.getElementById('btn-add-folder').addEventListener('click', () => addItem('folder'));
+  document.getElementById('btn-add-separator').addEventListener('click', addSeparator);
 
   // ── Icon picker modal wiring ──────────────────────────────────────────────
   document.getElementById('modal-close') .addEventListener('click', closeIconModal);
@@ -57,6 +58,70 @@ async function renderItems() {
 let dragSrcIndex = null;
 
 function buildRow(item, index, iconSrc) {
+  // ── Separator row ──────────────────────────────────────────────────────────
+  if (item.type === 'separator') {
+    const row = document.createElement('div');
+    row.className = 'item-row item-row-separator';
+    row.draggable = true;
+    row.dataset.index = index;
+
+    const handle = document.createElement('span');
+    handle.className = 'drag-handle';
+    handle.innerHTML = '&#8942;&#8942;';
+    handle.title = 'Arrastar para reordenar';
+
+    handle.addEventListener('mousedown', () => { row.draggable = true; });
+    row.addEventListener('dragstart', (e) => {
+      dragSrcIndex = index;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => row.classList.add('dragging'), 0);
+    });
+    row.addEventListener('dragend', () => {
+      row.classList.remove('dragging');
+      document.querySelectorAll('.item-row').forEach(r => r.classList.remove('drag-over'));
+    });
+    row.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      document.querySelectorAll('.item-row').forEach(r => r.classList.remove('drag-over'));
+      row.classList.add('drag-over');
+    });
+    row.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const targetIndex = parseInt(row.dataset.index);
+      if (dragSrcIndex === null || dragSrcIndex === targetIndex) return;
+      const [moved] = config.items.splice(dragSrcIndex, 1);
+      config.items.splice(targetIndex, 0, moved);
+      dragSrcIndex = null;
+      save();
+      renderItems();
+    });
+
+    const line = document.createElement('div');
+    line.className = 'separator-line';
+
+    const label = document.createElement('span');
+    label.className = 'separator-label';
+    label.textContent = 'Separador';
+
+    const btnRemove = document.createElement('button');
+    btnRemove.className = 'btn-remove';
+    btnRemove.title = 'Remover';
+    btnRemove.textContent = '✕';
+    btnRemove.addEventListener('click', () => {
+      config.items.splice(index, 1);
+      save();
+      renderItems();
+    });
+
+    row.appendChild(handle);
+    row.appendChild(line);
+    row.appendChild(label);
+    row.appendChild(btnRemove);
+    return row;
+  }
+
+  // ── Regular item row ───────────────────────────────────────────────────────
   const row = document.createElement('div');
   row.className = 'item-row';
   row.draggable = true;
@@ -148,6 +213,12 @@ async function addItem(type) {
   await api.addItem(filePath);
   config = await api.getConfig();
   await renderItems();
+}
+
+function addSeparator() {
+  config.items.push({ type: 'separator' });
+  save();
+  renderItems();
 }
 
 function save() {

@@ -119,13 +119,16 @@ app.whenReady().then(() => {
   tray = new Tray(trayIcon);
   tray.setToolTip('TrayLauncher');
 
-  tray.on('click', () => {
+  const toggleLauncher = () => {
     if (launcherWin && !launcherWin.isDestroyed() && launcherWin.isVisible()) {
       launcherWin.hide();
     } else {
       showLauncher();
     }
-  });
+  };
+
+  tray.on('click', toggleLauncher);
+  tray.on('right-click', toggleLauncher);
 
   // Update tray icon when OS theme changes
   nativeTheme.on('updated', () => {
@@ -165,10 +168,10 @@ function readIconDataUrl(id) {
 
 ipcMain.handle('get-config', () => {
   const config = loadConfig();
-  config.items = config.items.map(item => ({
-    ...item,
-    iconDataUrl: item.id ? readIconDataUrl(item.id) : null,
-  }));
+  config.items = config.items.map(item => {
+    if (item.type === 'separator') return item;
+    return { ...item, iconDataUrl: item.id ? readIconDataUrl(item.id) : null };
+  });
   return config;
 });
 

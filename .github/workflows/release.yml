@@ -5,6 +5,16 @@ on:
     branches:
       - main
       - dev
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "Publicar como pré-release?"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 permissions:
   contents: write
@@ -29,7 +39,7 @@ jobs:
         run: |
           VERSION=$(bun -e "console.log(require('./package.json').version)")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          if [[ "${{ github.ref_name }}" == "dev" ]]; then
+          if [[ "${{ github.ref_name }}" == "dev" || "${{ inputs.prerelease }}" == "true" ]]; then
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
             echo "tag=v$VERSION-dev" >> "$GITHUB_OUTPUT"
           else

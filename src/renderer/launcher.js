@@ -16,8 +16,8 @@ async function renderItems() {
   if (!config.items.length) {
     grid.innerHTML = `
       <div class="empty-state">
-        <span>Nenhum item adicionado.</span>
-        <span>Clique em ⚙ para configurar.</span>
+        <span>${t('emptyTitle')}</span>
+        <span>${t('emptyHintLauncher')}</span>
       </div>`;
     return;
   }
@@ -73,6 +73,7 @@ function fallbackSvg() {
 
 async function init() {
   await applyTheme();
+  await window.loadTranslations();
   config = await api.getConfig();
   await renderItems();
 
@@ -86,6 +87,11 @@ async function init() {
 
   api.onThemeChange(async () => {
     await applyTheme();
+  });
+
+  api.onLocaleChange(async () => {
+    await window.loadTranslations();
+    await renderItems();
   });
 }
 

@@ -50,9 +50,28 @@ body.dark input.editable:focus { border-color: #0078d4; background: rgba(255,255
   margin-bottom: 10px;
 }
 
+/* ── Language selector ── */
+.lang-select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 6px;
+  background: #fff;
+  color: #1a1a1a;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  appearance: auto;
+}
+.lang-select:focus { outline: 2px solid #0078d4; outline-offset: 1px; }
+body.dark .lang-select {
+  background: #333;
+  border-color: rgba(255,255,255,0.15);
+  color: #f3f3f3;
+}
+
 /* ── View mode toggle ── */
-.toggle-group {
-  display: flex;
+.toggle-group {  display: flex;
   gap: 6px;
 }
 

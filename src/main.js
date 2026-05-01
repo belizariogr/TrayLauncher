@@ -13,6 +13,25 @@ const { extractAllIcons } = require('./utils/iconPicker');
 const CONFIG_PATH = path.join(app.getPath('userData'), 'tray-launcher.json');
 const ICONS_DIR   = path.join(app.getPath('userData'), 'icons');
 
+// ─── i18n ────────────────────────────────────────────────────────────────────
+
+const SUPPORTED_LOCALES = ['pt-BR', 'en-US', 'es-ES'];
+
+function resolveLocale(config) {
+  if (config.locale && SUPPORTED_LOCALES.includes(config.locale)) return config.locale;
+  const sys = app.getLocale();
+  if (SUPPORTED_LOCALES.includes(sys)) return sys;
+  const lang = sys.split('-')[0];
+  if (lang === 'pt') return 'pt-BR';
+  if (lang === 'es') return 'es-ES';
+  return 'en-US';
+}
+
+function getTranslations(config) {
+  const locale = resolveLocale(config || loadConfig());
+  return require(`./locales/${locale}`);
+}
+
 let tray = null;
 let launcherWin = null;
 let settingsWin = null;
@@ -90,10 +109,11 @@ function openSettings() {
     return;
   }
 
+  const tr = getTranslations();
   settingsWin = new BrowserWindow({
     width: 480,
     height: 580,
-    title: 'TrayLauncher — Configurações',
+    title: tr.settingsWindowTitle,
     resizable: false,
     autoHideMenuBar: true,
     webPreferences: {
@@ -227,25 +247,41 @@ ipcMain.handle('open-settings', () => {
 });
 
 ipcMain.handle('quit-app', async () => {
+  const tr = getTranslations();
   const { response } = await dialog.showMessageBox({
     type: 'question',
-    buttons: ['Sim', 'Não'],
+    buttons: [tr.quitYes, tr.quitNo],
     defaultId: 1,
     cancelId: 1,
     title: 'TrayLauncher',
-    message: 'Fechar o TrayLauncher?',
-    detail: 'O aplicativo será removido da barra de tarefas.',
+    message: tr.quitDialogTitle,
+    detail: tr.quitDialogDetail,
   });
   if (response === 0) app.quit();
 });
 
+ipcMain.handle('get-locale', () => resolveLocale(loadConfig()));
+
+ipcMain.handle('set-locale', (_, locale) => {
+  if (!SUPPORTED_LOCALES.includes(locale)) return;
+  const config = loadConfig();
+  config.locale = locale;
+  saveConfig(config);
+  [launcherWin, settingsWin].forEach(w => {
+    if (w && !w.isDestroyed()) w.webContents.send('locale-changed');
+  });
+});
+
+ipcMain.handle('get-translations', () => getTranslations());
+
 ipcMain.handle('select-path', async (_, type) => {
+  const tr = getTranslations();
   const isFolder = type === 'folder';
   const result = await dialog.showOpenDialog({
     properties: isFolder ? ['openDirectory'] : ['openFile'],
     filters: isFolder ? [] : [
-      { name: 'Executáveis e Atalhos', extensions: ['exe', 'bat', 'cmd', 'lnk'] },
-      { name: 'Todos os Arquivos', extensions: ['*'] },
+      { name: tr.executablesFilter, extensions: ['exe', 'bat', 'cmd', 'lnk'] },
+      { name: tr.allFilesFilter, extensions: ['*'] },
     ],
   });
   return result.canceled ? null : result.filePaths[0];
@@ -259,9 +295,10 @@ ipcMain.handle('get-basename', (_, filePath) => {
 });
 
 ipcMain.handle('open-icon-picker', async () => {
+  const tr = getTranslations();
   const result = await dialog.showOpenDialog(settingsWin || undefined, {
     properties: ['openFile'],
-    filters: [{ name: 'Arquivos de ícone', extensions: ['ico', 'exe', 'dll', 'svg'] }],
+    filters: [{ name: tr.iconFilesFilter, extensions: ['ico', 'exe', 'dll', 'svg'] }],
   });
   return result.canceled ? null : result.filePaths[0];
 });

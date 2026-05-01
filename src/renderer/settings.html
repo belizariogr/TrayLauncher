@@ -10,7 +10,16 @@
   <div id="app">
 
     <section class="card">
-      <h3>Modo de visualização</h3>
+      <h3 data-i18n="language">Idioma</h3>
+      <select id="select-language" class="lang-select">
+        <option value="pt-BR">Português (Brasil)</option>
+        <option value="en-US">English (US)</option>
+        <option value="es-ES">Español (España)</option>
+      </select>
+    </section>
+
+    <section class="card">
+      <h3 data-i18n="viewMode">Modo de visualização</h3>
       <div class="toggle-group">
         <button id="btn-icons" class="toggle" data-mode="icon">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -19,7 +28,7 @@
             <rect x="2" y="13" width="9" height="9" rx="1.5"/>
             <rect x="13" y="13" width="9" height="9" rx="1.5"/>
           </svg>
-          Ícones
+          <span data-i18n="viewIcons">Ícones</span>
         </button>
         <button id="btn-list" class="toggle" data-mode="list">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -30,21 +39,21 @@
             <line x1="3" y1="12" x2="3.01" y2="12" stroke-linecap="round" stroke-width="2.5"/>
             <line x1="3" y1="18" x2="3.01" y2="18" stroke-linecap="round" stroke-width="2.5"/>
           </svg>
-          Lista
+          <span data-i18n="viewList">Lista</span>
         </button>
       </div>
     </section>
 
     <section class="card">
       <div class="section-header">
-        <h3>Itens do launcher</h3>
+        <h3 data-i18n="launcherItems">Itens do launcher</h3>
         <div class="add-group">
-          <button id="btn-add-file" class="btn-primary">+ Arquivo</button>
-          <button id="btn-add-folder" class="btn-primary btn-secondary">+ Pasta</button>
-          <button id="btn-add-separator" class="btn-primary btn-secondary">+ Separador</button>
+          <button id="btn-add-file"      class="btn-primary"                  data-i18n="addFile">+ Arquivo</button>
+          <button id="btn-add-folder"    class="btn-primary btn-secondary"    data-i18n="addFolder">+ Pasta</button>
+          <button id="btn-add-separator" class="btn-primary btn-secondary"    data-i18n="addSeparator">+ Separador</button>
         </div>
       </div>
-      <p class="hint">Executáveis, atalhos (.lnk), .bat, pastas</p>
+      <p class="hint" data-i18n="itemsHint">Executáveis, atalhos (.lnk), .bat, pastas</p>
       <div id="items-list"></div>
     </section>
 
@@ -54,25 +63,26 @@
   <div id="icon-modal" class="modal-backdrop hidden">
     <div class="modal-box">
       <div class="modal-header">
-        <span>Selecionar ícone</span>
+        <span data-i18n="selectIcon">Selecionar ícone</span>
         <button id="modal-close" class="modal-close-btn">✕</button>
       </div>
       <div class="modal-body">
         <div class="modal-file-row">
-          <button id="modal-pick-file" class="btn-primary">📂 Selecionar arquivo</button>
+          <button id="modal-pick-file" class="btn-primary" data-i18n="pickFile">📂 Selecionar arquivo</button>
           <span id="modal-file-label" class="modal-file-label"></span>
         </div>
-        <div id="modal-loading" class="modal-status hidden">Extraindo ícones…</div>
-        <div id="modal-empty"   class="modal-status hidden">Nenhum ícone encontrado.</div>
+        <div id="modal-loading" class="modal-status hidden" data-i18n="extracting">Extraindo ícones…</div>
+        <div id="modal-empty"   class="modal-status hidden" data-i18n="noIcons">Nenhum ícone encontrado.</div>
         <div id="icon-grid" class="icon-grid"></div>
       </div>
       <div class="modal-footer">
-        <button id="modal-apply"  class="btn-primary" disabled>Aplicar</button>
-        <button id="modal-cancel" class="btn-primary btn-secondary">Cancelar</button>
+        <button id="modal-apply"  class="btn-primary" disabled data-i18n="apply">Aplicar</button>
+        <button id="modal-cancel" class="btn-primary btn-secondary" data-i18n="cancel">Cancelar</button>
       </div>
     </div>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="settings.js"></script>
 </body>
 </html>

@@ -4,8 +4,17 @@
 let config = { items: [], viewMode: 'icon' };
 
 async function init() {
+  await window.loadTranslations();
+
   const { dark } = await api.getTheme();
   document.body.classList.toggle('dark', dark);
+
+  // Set language selector to current locale
+  const locale = await api.getLocale();
+  document.getElementById('select-language').value = locale;
+  document.getElementById('select-language').addEventListener('change', async (e) => {
+    await api.setLocale(e.target.value);
+  });
 
   config = await api.getConfig();
   applyViewMode();
@@ -30,6 +39,13 @@ async function init() {
     const { dark: d } = await api.getTheme();
     document.body.classList.toggle('dark', d);
   });
+
+  api.onLocaleChange(async () => {
+    await window.loadTranslations();
+    const newLocale = await api.getLocale();
+    document.getElementById('select-language').value = newLocale;
+    await renderItems();
+  });
 }
 
 function setViewMode(mode) {
@@ -48,7 +64,7 @@ async function renderItems() {
   list.innerHTML = '';
 
   if (!config.items.length) {
-    list.innerHTML = '<p class="empty-hint">Nenhum item. Clique em "+ Adicionar".</p>';
+    list.innerHTML = `<p class="empty-hint">${t('emptyHint')}</p>`;
     return;
   }
 
@@ -68,7 +84,7 @@ function buildRow(item, index, iconSrc) {
     const handle = document.createElement('span');
     handle.className = 'drag-handle';
     handle.innerHTML = '&#8942;&#8942;';
-    handle.title = 'Arrastar para reordenar';
+    handle.title = t('dragHandle');
 
     handle.addEventListener('mousedown', () => { row.draggable = true; });
     row.addEventListener('dragstart', (e) => {
@@ -102,11 +118,11 @@ function buildRow(item, index, iconSrc) {
 
     const label = document.createElement('span');
     label.className = 'separator-label';
-    label.textContent = 'Separador';
+    label.textContent = t('separatorLabel');
 
     const btnRemove = document.createElement('button');
     btnRemove.className = 'btn-remove';
-    btnRemove.title = 'Remover';
+    btnRemove.title = t('remove');
     btnRemove.textContent = '✕';
     btnRemove.addEventListener('click', () => {
       config.items.splice(index, 1);
@@ -131,8 +147,7 @@ function buildRow(item, index, iconSrc) {
   const handle = document.createElement('span');
   handle.className = 'drag-handle';
   handle.innerHTML = '&#8942;&#8942;'; // ⋮⋮
-  handle.title = 'Arrastar para reordenar';
-
+    handle.title = t('dragHandle');
   // Events — only start drag from handle
   handle.addEventListener('mousedown', () => { row.draggable = true; });
   row.addEventListener('dragstart', (e) => {
@@ -165,7 +180,7 @@ function buildRow(item, index, iconSrc) {
   img.src   = iconSrc || fallbackSvg();
   img.alt   = '';
   img.className = 'item-icon';
-  img.title = 'Clique para alterar o ícone';
+  img.title = t('changeIcon');
   img.addEventListener('click', () => openIconModal(item, index));
 
   const info = document.createElement('div');
@@ -175,7 +190,7 @@ function buildRow(item, index, iconSrc) {
   nameInput.type = 'text';
   nameInput.className = 'editable';
   nameInput.value = item.name;
-  nameInput.title = 'Clique para renomear';
+  nameInput.title = t('rename');
   nameInput.addEventListener('change', () => {
     config.items[index].name = nameInput.value.trim() || item.name;
     save();
@@ -191,7 +206,7 @@ function buildRow(item, index, iconSrc) {
 
   const btnRemove = document.createElement('button');
   btnRemove.className = 'btn-remove';
-  btnRemove.title = 'Remover';
+  btnRemove.title = t('remove');
   btnRemove.textContent = '✕';
   btnRemove.addEventListener('click', () => {
     config.items.splice(index, 1);

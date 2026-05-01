@@ -41,11 +41,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install NSIS
-        run: choco install nsis -y
+      - name: Install Inno Setup
+        run: choco install innosetup -y
 
       - name: Build installer
-        run: makensis /DAPPVERSION=${{ steps.pkg.outputs.version }} scripts\installer.nsi
+        run: iscc /DAppVersion=${{ steps.pkg.outputs.version }} scripts\installer.iss
 
       - name: Create or update release
         uses: softprops/action-gh-release@v2

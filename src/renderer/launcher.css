@@ -161,7 +161,7 @@ body.light {
   border: none;
   cursor: pointer;
   color: var(--text-dim);
-  padding: 6px;
+  padding: 8px;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -188,7 +188,7 @@ body.light #btn-quit img { filter: none; }
   border: none;
   cursor: pointer;
   color: var(--text-dim);
-  padding: 6px;
+  padding: 8px;
   border-radius: 4px;
   display: flex;
   align-items: center;

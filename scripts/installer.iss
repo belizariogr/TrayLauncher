@@ -40,7 +40,7 @@ en.FinishRunApp=Launch {#AppName} now
 es.FinishRunApp=Ejecutar {#AppName} ahora
 
 [Tasks]
-Name: "startup"; Description: "{cm:StartupCheckbox}"; GroupDescription: ""; Flags: checkedonce
+Name: "startup"; Description: "{cm:StartupCheckbox}"; GroupDescription: "{#AppName}"; Flags: checkedonce
 
 [Files]
 Source: "{#SrcDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -48,7 +48,7 @@ Source: "{#SrcDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs cre
 [Icons]
 Name: "{group}\{#AppName}";        Filename: "{app}\{#AppExe}"
 Name: "{group}\Uninstall";         Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks:
+Name: "{userdesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks:
 
 [Registry]
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; \

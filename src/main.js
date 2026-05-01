@@ -109,12 +109,18 @@ function openSettings() {
     return;
   }
 
+  const saved = loadConfig().settingsWindowBounds || {};
+  const width  = saved.width  || 720;
+  const height = saved.height || 870;
+
   const tr = getTranslations();
   settingsWin = new BrowserWindow({
-    width: 480,
-    height: 580,
+    width,
+    height,
+    minWidth: 380,
+    minHeight: 420,
     title: tr.settingsWindowTitle,
-    resizable: false,
+    resizable: true,
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -124,6 +130,14 @@ function openSettings() {
   });
 
   settingsWin.loadFile(path.join(__dirname, 'renderer', 'settings.html'));
+  settingsWin.on('close', () => {
+    if (settingsWin && !settingsWin.isDestroyed()) {
+      const [w, h] = settingsWin.getSize();
+      const cfg = loadConfig();
+      cfg.settingsWindowBounds = { width: w, height: h };
+      saveConfig(cfg);
+    }
+  });
   settingsWin.on('closed', () => { settingsWin = null; });
 }
 

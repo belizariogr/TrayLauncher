@@ -6,7 +6,9 @@ body {
   background: #f3f3f3;
   color: #1a1a1a;
   height: 100vh;
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 body.dark {
@@ -32,6 +34,9 @@ body.dark input.editable:focus { border-color: #0078d4; background: rgba(255,255
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .card {
@@ -137,12 +142,21 @@ body.dark .lang-select {
 body.dark .btn-secondary { color: #60a5fa; border-color: #60a5fa; }
 body.dark .btn-secondary:hover { background: rgba(96,165,250,0.1); }
 
+/* ── Items card grows to fill available space ── */
+#card-items {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 /* ── Item rows ── */
 #items-list {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: 360px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
 }
@@ -389,17 +403,17 @@ body.dark .icon-cell.selected { border-color: #60a5fa; background: rgba(96,165,2
 .about-footer {
   display: flex;
   justify-content: center;
-  padding: 4px 0 8px;
+  padding: 2px 0;
 }
 
 .btn-about {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   font-family: inherit;
   color: rgba(0,0,0,0.38);
-  padding: 4px 10px;
+  padding: 2px 8px;
   border-radius: 4px;
   transition: color 0.12s, background 0.12s;
 }

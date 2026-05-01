@@ -384,3 +384,92 @@ body.dark .modal-file-label   { color: rgba(255,255,255,0.4); }
 body.dark .modal-status       { color: rgba(255,255,255,0.4); }
 body.dark .icon-cell:hover    { background: rgba(255,255,255,0.07); }
 body.dark .icon-cell.selected { border-color: #60a5fa; background: rgba(96,165,250,0.15); }
+
+/* ─── About footer & modal ─────────────────────────────────────────────────── */
+.about-footer {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 8px;
+}
+
+.btn-about {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  color: rgba(0,0,0,0.38);
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: color 0.12s, background 0.12s;
+}
+.btn-about:hover {
+  color: #0078d4;
+  background: rgba(0,120,212,0.07);
+}
+body.dark .btn-about { color: rgba(255,255,255,0.3); }
+body.dark .btn-about:hover { color: #60a5fa; background: rgba(96,165,250,0.1); }
+
+.about-modal-box {
+  width: 300px;
+  min-height: unset;
+}
+
+.about-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0 4px;
+}
+
+.about-app-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.about-version {
+  font-size: 11px;
+  color: rgba(0,0,0,0.4);
+}
+body.dark .about-version { color: rgba(255,255,255,0.4); }
+
+.about-divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(0,0,0,0.12);
+  margin: 6px 0;
+}
+body.dark .about-divider { background: rgba(255,255,255,0.12); }
+
+.about-dev-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(0,0,0,0.38);
+}
+body.dark .about-dev-label { color: rgba(255,255,255,0.38); }
+
+.about-dev-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.about-email {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  color: #0078d4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.12s;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.about-email:hover { background: rgba(0,120,212,0.08); }
+body.dark .about-email { color: #60a5fa; }
+body.dark .about-email:hover { background: rgba(96,165,250,0.1); }

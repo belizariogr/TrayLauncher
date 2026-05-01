@@ -19,6 +19,8 @@ contextBridge.exposeInMainWorld('api', {
   getLocale:       ()      => ipcRenderer.invoke('get-locale'),
   setLocale:       (l)     => ipcRenderer.invoke('set-locale', l),
   getTranslations: ()      => ipcRenderer.invoke('get-translations'),
+  getAppVersion:   ()      => ipcRenderer.invoke('get-app-version'),
+  openExternal:    (url)   => ipcRenderer.invoke('open-external', url),
   onRefresh:       (cb)    => ipcRenderer.on('refresh', cb),
   onThemeChange:   (cb)    => ipcRenderer.on('theme-changed', cb),
   onLocaleChange:  (cb)    => ipcRenderer.on('locale-changed', cb),

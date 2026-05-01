@@ -32,6 +32,12 @@ module.exports = {
   apply:              'Aplicar',
   cancel:             'Cancelar',
 
+  // ── About ──────────────────────────────────────────────────────────────────
+  aboutBtn:           'Acerca de',
+  aboutTitle:         'Acerca de TrayLauncher',
+  developedBy:        'Desarrollado por',
+  close:              'Cerrar',
+
   // ── Launcher window ────────────────────────────────────────────────────────
   settingsBtn:        'Configuración',
   quitBtn:            'Cerrar aplicación',

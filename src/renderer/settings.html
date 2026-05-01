@@ -57,6 +57,31 @@
       <div id="items-list"></div>
     </section>
 
+    <footer class="about-footer">
+      <button id="btn-about" class="btn-about" data-i18n="aboutBtn">Sobre</button>
+    </footer>
+
+  </div>
+
+  <!-- ── About Modal ──────────────────────────────────────────────────────── -->
+  <div id="about-modal" class="modal-backdrop hidden">
+    <div class="modal-box about-modal-box">
+      <div class="modal-header">
+        <span data-i18n="aboutTitle">Sobre o TrayLauncher</span>
+        <button id="about-modal-close" class="modal-close-btn">✕</button>
+      </div>
+      <div class="about-body">
+        <div class="about-app-name">TrayLauncher</div>
+        <div class="about-version" id="about-version"></div>
+        <div class="about-divider"></div>
+        <div class="about-dev-label" data-i18n="developedBy">Desenvolvido por</div>
+        <div class="about-dev-name">Belizário G. Ribeiro Filho</div>
+        <button id="about-email-btn" class="about-email">belizariogr@gmail.com</button>
+      </div>
+      <div class="modal-footer">
+        <button id="about-close" class="btn-primary btn-secondary" data-i18n="close">Fechar</button>
+      </div>
+    </div>
   </div>
 
   <!-- ── Icon Picker Modal ─────────────────────────────────────────── -->

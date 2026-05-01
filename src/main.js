@@ -313,6 +313,13 @@ ipcMain.handle('extract-file-icons', async (_, filePath) => {
   return icons.map(ic => ({ ...ic, type: 'png' }));
 });
 
+ipcMain.handle('get-app-version', () => app.getVersion());
+
+ipcMain.handle('open-external', (_, url) => {
+  const allowed = /^mailto:/i;
+  if (allowed.test(url)) shell.openExternal(url);
+});
+
 ipcMain.handle('apply-item-icon', async (_, { itemId, pngDataUrl }) => {
   if (!fs.existsSync(ICONS_DIR)) fs.mkdirSync(ICONS_DIR, { recursive: true });
   const base64 = pngDataUrl.replace(/^data:image\/png;base64,/, '');

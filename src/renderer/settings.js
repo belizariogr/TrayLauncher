@@ -35,6 +35,17 @@ async function init() {
     if (e.target.id === 'icon-modal') closeIconModal();
   });
 
+  // ── About modal wiring ────────────────────────────────────────────────────
+  document.getElementById('btn-about').addEventListener('click', openAboutModal);
+  document.getElementById('about-modal-close').addEventListener('click', closeAboutModal);
+  document.getElementById('about-close').addEventListener('click', closeAboutModal);
+  document.getElementById('about-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'about-modal') closeAboutModal();
+  });
+  document.getElementById('about-email-btn').addEventListener('click', () => {
+    api.openExternal('mailto:belizariogr@gmail.com');
+  });
+
   api.onThemeChange(async () => {
     const { dark: d } = await api.getTheme();
     document.body.classList.toggle('dark', d);
@@ -46,6 +57,16 @@ async function init() {
     document.getElementById('select-language').value = newLocale;
     await renderItems();
   });
+}
+
+async function openAboutModal() {
+  const version = await api.getAppVersion();
+  document.getElementById('about-version').textContent = `v${version}`;
+  document.getElementById('about-modal').classList.remove('hidden');
+}
+
+function closeAboutModal() {
+  document.getElementById('about-modal').classList.add('hidden');
 }
 
 function setViewMode(mode) {

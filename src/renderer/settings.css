@@ -1,0 +1,196 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  background: #f3f3f3;
+  color: #1a1a1a;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+body.dark {
+  background: #1f1f1f;
+  color: #f3f3f3;
+}
+body.dark .card { background: #2a2a2a; border-color: rgba(255,255,255,0.08); }
+body.dark .hint { color: rgba(243,243,243,0.45); }
+body.dark .item-row { border-color: rgba(255,255,255,0.06); }
+body.dark .item-row:hover { background: rgba(255,255,255,0.05); }
+body.dark .item-name { color: #f3f3f3; }
+body.dark .item-path { color: rgba(243,243,243,0.45); }
+body.dark .toggle { color: rgba(243,243,243,0.65); }
+body.dark .toggle:hover { background: rgba(255,255,255,0.08); color: #f3f3f3; }
+body.dark .toggle.active { background: rgba(255,255,255,0.12); color: #f3f3f3; }
+body.dark .btn-remove { color: rgba(243,243,243,0.35); }
+body.dark .btn-remove:hover { color: #ff6b6b; background: rgba(255,107,107,0.1); }
+body.dark input.editable { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.15); color: #f3f3f3; }
+body.dark input.editable:focus { border-color: #0078d4; background: rgba(255,255,255,0.1); }
+
+#app {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.card h3 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  margin-bottom: 10px;
+}
+
+/* ── View mode toggle ── */
+.toggle-group {
+  display: flex;
+  gap: 6px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  color: rgba(0,0,0,0.55);
+  background: transparent;
+  transition: background 0.12s, color 0.12s;
+}
+.toggle:hover { background: rgba(0,0,0,0.05); color: #1a1a1a; }
+.toggle.active {
+  background: rgba(0,120,212,0.12);
+  color: #0067c0;
+  font-weight: 600;
+}
+
+/* ── Section header ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.hint {
+  font-size: 11px;
+  color: rgba(0,0,0,0.4);
+  margin-bottom: 10px;
+}
+
+/* ── Add buttons ── */
+.add-group {
+  display: flex;
+  gap: 6px;
+}
+.btn-primary {
+  padding: 5px 14px;
+  border: none;
+  border-radius: 5px;
+  background: #0078d4;
+  color: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.btn-primary:hover { background: #106ebe; }
+.btn-secondary {
+  background: transparent;
+  color: #0078d4;
+  border: 1px solid #0078d4;
+}
+.btn-secondary:hover { background: rgba(0,120,212,0.08); }
+body.dark .btn-secondary { color: #60a5fa; border-color: #60a5fa; }
+body.dark .btn-secondary:hover { background: rgba(96,165,250,0.1); }
+
+/* ── Item rows ── */
+#items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 360px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.empty-hint {
+  text-align: center;
+  padding: 24px 0;
+  color: rgba(0,0,0,0.35);
+  font-size: 12px;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  border-radius: 5px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: background 0.1s;
+}
+.item-row:hover { background: rgba(0,0,0,0.03); }
+.item-row:last-child { border-bottom: none; }
+
+.item-row img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.item-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+
+input.editable {
+  font-family: inherit;
+  font-size: 13px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 5px;
+  background: transparent;
+  color: inherit;
+  width: 100%;
+  transition: border-color 0.12s, background 0.12s;
+}
+input.editable:focus {
+  outline: none;
+  border-color: #0078d4;
+  background: rgba(0,120,212,0.05);
+}
+
+.item-path {
+  font-size: 10.5px;
+  color: rgba(0,0,0,0.38);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: rgba(0,0,0,0.3);
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.12s, background 0.12s;
+}
+.btn-remove:hover { color: #d32f2f; background: rgba(211,47,47,0.08); }

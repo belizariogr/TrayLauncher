@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'">
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div id="app">
+
+    <section class="card">
+      <h3>Modo de visualização</h3>
+      <div class="toggle-group">
+        <button id="btn-icons" class="toggle" data-mode="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="2" y="2" width="9" height="9" rx="1.5"/>
+            <rect x="13" y="2" width="9" height="9" rx="1.5"/>
+            <rect x="2" y="13" width="9" height="9" rx="1.5"/>
+            <rect x="13" y="13" width="9" height="9" rx="1.5"/>
+          </svg>
+          Ícones
+        </button>
+        <button id="btn-list" class="toggle" data-mode="list">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6" stroke-linecap="round" stroke-width="2.5"/>
+            <line x1="3" y1="12" x2="3.01" y2="12" stroke-linecap="round" stroke-width="2.5"/>
+            <line x1="3" y1="18" x2="3.01" y2="18" stroke-linecap="round" stroke-width="2.5"/>
+          </svg>
+          Lista
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h3>Itens do launcher</h3>
+        <div class="add-group">
+          <button id="btn-add-file" class="btn-primary">+ Arquivo</button>
+          <button id="btn-add-folder" class="btn-primary btn-secondary">+ Pasta</button>
+        </div>
+      </div>
+      <p class="hint">Executáveis, atalhos (.lnk), .bat, pastas</p>
+      <div id="items-list"></div>
+    </section>
+
+  </div>
+  <script src="settings.js"></script>
+</body>
+</html>

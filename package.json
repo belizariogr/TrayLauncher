@@ -1,0 +1,38 @@
+{
+  "name": "tray-launcher",
+  "version": "1.0.0",
+  "description": "System tray application launcher for Windows 11",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.traylauncher.app",
+    "productName": "TrayLauncher",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        { "target": "portable", "arch": ["x64"] },
+        { "target": "dir",      "arch": ["x64"] }
+      ],
+      "icon": "assets/icon/traylauncher.ico",
+      "forceCodeSigning": false
+    },
+    "portable": {
+      "artifactName": "TrayLauncher-portable.exe"
+    },
+    "files": [
+      "src/**",
+      "assets/**",
+      "package.json"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "dependencies": {}
+}

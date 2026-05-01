@@ -12,7 +12,8 @@ const SIZES = [48, 72, 96, 144];
 const PS_SCRIPT = `
 param([string]$fp)
 $ErrorActionPreference = 'SilentlyContinue'
-Add-Type -Language CSharp -TypeDefinition @'
+Add-Type -AssemblyName System.Drawing
+Add-Type -Language CSharp -ReferencedAssemblies 'System.Drawing' -TypeDefinition @'
 using System; using System.IO; using System.Drawing; using System.Drawing.Imaging; using System.Runtime.InteropServices;
 public class TLIconEx {
   [DllImport("shell32.dll")] static extern int SHGetImageList(int n, ref Guid g, out IImageList v);

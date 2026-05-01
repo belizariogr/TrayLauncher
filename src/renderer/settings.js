@@ -16,6 +16,15 @@ async function init() {
   document.getElementById('btn-add-file').addEventListener('click', () => addItem('file'));
   document.getElementById('btn-add-folder').addEventListener('click', () => addItem('folder'));
 
+  // ── Icon picker modal wiring ──────────────────────────────────────────────
+  document.getElementById('modal-close') .addEventListener('click', closeIconModal);
+  document.getElementById('modal-cancel').addEventListener('click', closeIconModal);
+  document.getElementById('modal-pick-file').addEventListener('click', pickIconFile);
+  document.getElementById('modal-apply').addEventListener('click', applySelectedIcon);
+  document.getElementById('icon-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'icon-modal') closeIconModal();
+  });
+
   api.onThemeChange(async () => {
     const { dark: d } = await api.getTheme();
     document.body.classList.toggle('dark', d);
@@ -88,8 +97,11 @@ function buildRow(item, index, iconSrc) {
   });
 
   const img = document.createElement('img');
-  img.src = iconSrc || fallbackSvg();
-  img.alt = '';
+  img.src   = iconSrc || fallbackSvg();
+  img.alt   = '';
+  img.className = 'item-icon';
+  img.title = 'Clique para alterar o ícone';
+  img.addEventListener('click', () => openIconModal(item, index));
 
   const info = document.createElement('div');
   info.className = 'item-info';
@@ -146,6 +158,127 @@ function fallbackSvg() {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
     stroke="gray" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`;
   return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+// ─── Icon picker modal ────────────────────────────────────────────────────────
+
+let iconModalState = { itemId: null, itemIndex: null, selectedDataUrl: null, svgContent: null };
+
+function openIconModal(item, index) {
+  iconModalState = { itemId: item.id, itemIndex: index, selectedDataUrl: null, svgContent: null };
+  document.getElementById('icon-modal').classList.remove('hidden');
+  document.getElementById('icon-grid').innerHTML      = '';
+  document.getElementById('modal-file-label').textContent = '';
+  document.getElementById('modal-loading').classList.add('hidden');
+  document.getElementById('modal-empty').classList.add('hidden');
+  document.getElementById('modal-apply').disabled = true;
+}
+
+function closeIconModal() {
+  document.getElementById('icon-modal').classList.add('hidden');
+  iconModalState = { itemId: null, itemIndex: null, selectedDataUrl: null, svgContent: null };
+}
+
+async function pickIconFile() {
+  const filePath = await api.openIconPicker();
+  if (!filePath) return;
+
+  const fileName = filePath.replace(/.*[/\\]/, '');
+  document.getElementById('modal-file-label').textContent = fileName;
+  document.getElementById('modal-loading').classList.remove('hidden');
+  document.getElementById('modal-empty').classList.add('hidden');
+  document.getElementById('icon-grid').innerHTML = '';
+  document.getElementById('modal-apply').disabled = true;
+  iconModalState.selectedDataUrl = null;
+  iconModalState.svgContent      = null;
+
+  const icons = await api.extractFileIcons(filePath);
+  document.getElementById('modal-loading').classList.add('hidden');
+
+  if (!icons || icons.length === 0) {
+    document.getElementById('modal-empty').classList.remove('hidden');
+    return;
+  }
+  renderIconGrid(icons);
+}
+
+function renderIconGrid(icons) {
+  const grid = document.getElementById('icon-grid');
+  grid.innerHTML = '';
+
+  for (const icon of icons) {
+    const cell = document.createElement('div');
+    cell.className = 'icon-cell';
+
+    const img = document.createElement('img');
+    img.alt = '';
+
+    if (icon.type === 'svg') {
+      const encoded = btoa(unescape(encodeURIComponent(icon.content)));
+      img.src = `data:image/svg+xml;base64,${encoded}`;
+      cell.addEventListener('click', () => {
+        grid.querySelectorAll('.icon-cell').forEach(c => c.classList.remove('selected'));
+        cell.classList.add('selected');
+        iconModalState.selectedDataUrl = null;
+        iconModalState.svgContent      = icon.content;
+        document.getElementById('modal-apply').disabled = false;
+      });
+    } else {
+      img.src = icon.dataUrl;
+      cell.addEventListener('click', () => {
+        grid.querySelectorAll('.icon-cell').forEach(c => c.classList.remove('selected'));
+        cell.classList.add('selected');
+        iconModalState.selectedDataUrl = icon.dataUrl;
+        iconModalState.svgContent      = null;
+        document.getElementById('modal-apply').disabled = false;
+      });
+    }
+
+    cell.appendChild(img);
+    grid.appendChild(cell);
+  }
+}
+
+async function applySelectedIcon() {
+  const { itemId, itemIndex, selectedDataUrl, svgContent } = iconModalState;
+  if (!itemId) return;
+
+  let pngDataUrl = selectedDataUrl;
+
+  if (svgContent) {
+    pngDataUrl = await renderSvgToCanvas(svgContent, 256);
+    if (!pngDataUrl) return;
+  }
+
+  if (!pngDataUrl) return;
+
+  const newDataUrl = await api.applyItemIcon({ itemId, pngDataUrl });
+  if (newDataUrl && itemIndex !== null) {
+    const rows = document.querySelectorAll('.item-row');
+    if (rows[itemIndex]) {
+      const imgEl = rows[itemIndex].querySelector('img.item-icon');
+      if (imgEl) imgEl.src = newDataUrl;
+    }
+    config.items[itemIndex].iconDataUrl = newDataUrl;
+  }
+
+  closeIconModal();
+}
+
+function renderSvgToCanvas(svgContent, size) {
+  return new Promise((resolve) => {
+    const img     = new Image();
+    const encoded = btoa(unescape(encodeURIComponent(svgContent)));
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width  = size;
+      canvas.height = size;
+      canvas.getContext('2d').drawImage(img, 0, 0, size, size);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = () => resolve(null);
+    img.src = `data:image/svg+xml;base64,${encoded}`;
+  });
 }
 
 init();

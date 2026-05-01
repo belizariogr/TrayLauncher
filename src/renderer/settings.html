@@ -48,6 +48,30 @@
     </section>
 
   </div>
+
+  <!-- ── Icon Picker Modal ─────────────────────────────────────────── -->
+  <div id="icon-modal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Selecionar ícone</span>
+        <button id="modal-close" class="modal-close-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-file-row">
+          <button id="modal-pick-file" class="btn-primary">📂 Selecionar arquivo</button>
+          <span id="modal-file-label" class="modal-file-label"></span>
+        </div>
+        <div id="modal-loading" class="modal-status hidden">Extraindo ícones…</div>
+        <div id="modal-empty"   class="modal-status hidden">Nenhum ícone encontrado.</div>
+        <div id="icon-grid" class="icon-grid"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-apply"  class="btn-primary" disabled>Aplicar</button>
+        <button id="modal-cancel" class="btn-primary btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="settings.js"></script>
 </body>
 </html>

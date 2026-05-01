@@ -7,7 +7,8 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const { createLauncherIconPNG } = require('./utils/createIcon');
-const { extractAndSaveIcons, deleteIcons } = require('./utils/extractIcon');
+const { extractAndSaveIcons, deleteIcons, SIZES } = require('./utils/extractIcon');
+const { extractAllIcons } = require('./utils/iconPicker');
 
 const CONFIG_PATH = path.join(app.getPath('userData'), 'tray-launcher.json');
 const ICONS_DIR   = path.join(app.getPath('userData'), 'icons');
@@ -252,4 +253,38 @@ ipcMain.handle('get-basename', (_, filePath) => {
   // Strip extension for display, but keep for folders
   const ext = path.extname(base);
   return ext ? base.slice(0, -ext.length) : base;
+});
+
+ipcMain.handle('open-icon-picker', async () => {
+  const result = await dialog.showOpenDialog(settingsWin || undefined, {
+    properties: ['openFile'],
+    filters: [{ name: 'Arquivos de ícone', extensions: ['ico', 'exe', 'dll', 'svg'] }],
+  });
+  return result.canceled ? null : result.filePaths[0];
+});
+
+ipcMain.handle('extract-file-icons', async (_, filePath) => {
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext === '.svg') {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    return [{ type: 'svg', content }];
+  }
+  const icons = await extractAllIcons(filePath);
+  return icons.map(ic => ({ ...ic, type: 'png' }));
+});
+
+ipcMain.handle('apply-item-icon', async (_, { itemId, pngDataUrl }) => {
+  if (!fs.existsSync(ICONS_DIR)) fs.mkdirSync(ICONS_DIR, { recursive: true });
+  const base64 = pngDataUrl.replace(/^data:image\/png;base64,/, '');
+  const buf    = Buffer.from(base64, 'base64');
+  const img    = nativeImage.createFromBuffer(buf);
+  if (img.isEmpty()) return null;
+  for (const size of SIZES) {
+    const resized = img.resize({ width: size, height: size, quality: 'best' });
+    fs.writeFileSync(path.join(ICONS_DIR, `${itemId}-${size}.png`), resized.toPNG());
+  }
+  if (launcherWin && !launcherWin.isDestroyed()) {
+    launcherWin.webContents.send('refresh');
+  }
+  return readIconDataUrl(itemId);
 });

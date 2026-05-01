@@ -172,6 +172,16 @@ body.dark .empty-hint { color: rgba(243,243,243,0.45); }
   object-fit: contain;
 }
 
+img.item-icon {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: opacity 0.12s, box-shadow 0.12s;
+}
+img.item-icon:hover {
+  opacity: 0.75;
+  box-shadow: 0 0 0 2px rgba(0,120,212,0.5);
+}
+
 .item-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
 
 input.editable {
@@ -211,3 +221,121 @@ input.editable:focus {
   transition: color 0.12s, background 0.12s;
 }
 .btn-remove:hover { color: #d32f2f; background: rgba(211,47,47,0.08); }
+
+/* ─── Utility ─────────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ─── Icon Picker Modal ──────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  width: 420px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: rgba(0,0,0,0.45);
+  transition: background 0.12s, color 0.12s;
+}
+.modal-close-btn:hover { background: rgba(0,0,0,0.07); color: #1a1a1a; }
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.modal-file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-file-label {
+  font-size: 11px;
+  color: rgba(0,0,0,0.45);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.modal-status {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 12px;
+  color: rgba(0,0,0,0.4);
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 2px;
+  scrollbar-width: thin;
+}
+
+.icon-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 4px;
+  transition: border-color 0.1s, background 0.1s;
+}
+.icon-cell:hover    { background: rgba(0,0,0,0.05); }
+.icon-cell.selected { border-color: #0078d4; background: rgba(0,120,212,0.1); }
+.icon-cell img      { width: 48px; height: 48px; object-fit: contain; }
+
+.modal-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+/* Dark mode */
+body.dark .modal-box          { background: #2a2a2a; }
+body.dark .modal-close-btn    { color: rgba(255,255,255,0.45); }
+body.dark .modal-close-btn:hover { background: rgba(255,255,255,0.1); color: #f3f3f3; }
+body.dark .modal-file-label   { color: rgba(255,255,255,0.4); }
+body.dark .modal-status       { color: rgba(255,255,255,0.4); }
+body.dark .icon-cell:hover    { background: rgba(255,255,255,0.07); }
+body.dark .icon-cell.selected { border-color: #60a5fa; background: rgba(96,165,250,0.15); }

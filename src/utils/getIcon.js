@@ -11,7 +11,8 @@ const cache = new Map();
 const PS_SCRIPT = `
 param([string]$inputFile)
 $ErrorActionPreference = 'SilentlyContinue'
-Add-Type -Language CSharp -TypeDefinition @'
+Add-Type -AssemblyName System.Drawing
+Add-Type -Language CSharp -ReferencedAssemblies 'System.Drawing' -TypeDefinition @'
 using System; using System.IO; using System.Drawing; using System.Drawing.Imaging; using System.Runtime.InteropServices;
 public class TLIcon {
   [DllImport("shell32.dll")] public static extern int SHGetImageList(int n, ref Guid g, out IImageList v);

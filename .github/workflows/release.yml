@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev
+      - pre-release
   workflow_dispatch:
     inputs:
       prerelease:
@@ -39,9 +39,9 @@ jobs:
         run: |
           VERSION=$(bun -e "console.log(require('./package.json').version)")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          if [[ "${{ github.ref_name }}" == "dev" || "${{ inputs.prerelease }}" == "true" ]]; then
+          if [[ "${{ github.ref_name }}" == "pre-release" || "${{ inputs.prerelease }}" == "true" ]]; then
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
-            echo "tag=v$VERSION-dev" >> "$GITHUB_OUTPUT"
+            echo "tag=v$VERSION-pre" >> "$GITHUB_OUTPUT"
           else
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
             echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"

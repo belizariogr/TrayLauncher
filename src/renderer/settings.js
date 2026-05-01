@@ -42,8 +42,7 @@ async function renderItems() {
     return;
   }
 
-  const icons = await Promise.all(config.items.map(item => api.getIcon(item.path)));
-  config.items.forEach((item, i) => list.appendChild(buildRow(item, i, icons[i])));
+  config.items.forEach((item, i) => list.appendChild(buildRow(item, i, item.iconDataUrl)));
 }
 
 let dragSrcIndex = null;
@@ -134,9 +133,8 @@ async function addItem(type) {
   const filePath = await api.selectPath(type);
   if (!filePath) return;
 
-  const name = await api.getBasename(filePath);
-  config.items.push({ name, path: filePath });
-  await save();
+  await api.addItem(filePath);
+  config = await api.getConfig();
   await renderItems();
 }
 

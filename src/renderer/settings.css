@@ -164,12 +164,12 @@ body.dark .btn-secondary:hover { background: rgba(96,165,250,0.1); }
 .drag-handle:active { cursor: grabbing; }
 body.dark .drag-handle { color: rgba(255,255,255,0.2); }
 body.dark .item-row.drag-over { background: rgba(96,165,250,0.1); border-color: rgba(96,165,250,0.3); }
+body.dark .empty-hint { color: rgba(243,243,243,0.45); }
 
 .item-row img {
   width: 24px;
   height: 24px;
   object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
 }
 
 .item-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }

@@ -22,11 +22,9 @@ async function renderItems() {
     return;
   }
 
-  // Load all icons in parallel, then render in order
-  const icons = await Promise.all(config.items.map(item => api.getIcon(item.path)));
-
-  config.items.forEach((item, i) => {
-    const el = buildItem(item, icons[i]);
+  // Icons are embedded in config items as iconDataUrl (pre-extracted at add time)
+  config.items.forEach((item) => {
+    const el = buildItem(item, item.iconDataUrl);
     grid.appendChild(el);
   });
 }

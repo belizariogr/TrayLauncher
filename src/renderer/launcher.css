@@ -84,7 +84,6 @@ body.light {
   width: 48px;
   height: 48px;
   object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
   flex-shrink: 0;
 }
 .item-icon .item-name {
@@ -119,7 +118,6 @@ body.light {
   height: 24px;
   object-fit: contain;
   flex-shrink: 0;
-  image-rendering: -webkit-optimize-contrast;
 }
 .item-list .item-name {
   font-size: 12px;

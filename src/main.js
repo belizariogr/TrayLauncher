@@ -5,9 +5,12 @@ const {
 } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const { createLauncherIconPNG } = require('./utils/createIcon');
+const { extractAndSaveIcons, deleteIcons } = require('./utils/extractIcon');
 
 const CONFIG_PATH = path.join(app.getPath('userData'), 'tray-launcher.json');
+const ICONS_DIR   = path.join(app.getPath('userData'), 'icons');
 
 let tray = null;
 let launcherWin = null;
@@ -139,13 +142,45 @@ app.whenReady().then(() => {
 // Keep app alive in tray when all windows are closed
 app.on('window-all-closed', () => {});
 
+// ─── Icon helpers ────────────────────────────────────────────────────────────
+
+function itemId(filePath) {
+  return crypto.createHash('md5').update(filePath).digest('hex').slice(0, 12);
+}
+
+/** Reads the best available icon PNG and returns as data URL, or null. */
+function readIconDataUrl(id) {
+  for (const size of [144, 96, 72, 48]) {
+    const p = path.join(ICONS_DIR, `${id}-${size}.png`);
+    try {
+      if (fs.existsSync(p))
+        return 'data:image/png;base64,' + fs.readFileSync(p).toString('base64');
+    } catch {}
+  }
+  return null;
+}
+
 // ─── IPC handlers ────────────────────────────────────────────────────────────
 
-ipcMain.handle('get-config', () => loadConfig());
+ipcMain.handle('get-config', () => {
+  const config = loadConfig();
+  config.items = config.items.map(item => ({
+    ...item,
+    iconDataUrl: item.id ? readIconDataUrl(item.id) : null,
+  }));
+  return config;
+});
 
 ipcMain.handle('save-config', (_, config) => {
-  saveConfig(config);
-  // Refresh launcher if it's open
+  const old = loadConfig();
+  // Delete icons for removed items
+  const newIds = new Set(config.items.map(i => i.id).filter(Boolean));
+  for (const item of old.items) {
+    if (item.id && !newIds.has(item.id)) deleteIcons(item.id, ICONS_DIR);
+  }
+  // Strip transient iconDataUrl before persisting
+  const toSave = { ...config, items: config.items.map(({ iconDataUrl, ...rest }) => rest) };
+  saveConfig(toSave);
   if (launcherWin && !launcherWin.isDestroyed()) {
     launcherWin.webContents.send('refresh');
   }
@@ -153,13 +188,24 @@ ipcMain.handle('save-config', (_, config) => {
 
 ipcMain.handle('get-theme', () => ({ dark: nativeTheme.shouldUseDarkColors }));
 
-ipcMain.handle('get-icon', async (_, filePath) => {
-  try {
-    const icon = await app.getFileIcon(filePath, { size: 'large' });
-    return icon.toDataURL();
-  } catch {
-    return null;
+ipcMain.handle('add-item', async (_, filePath) => {
+  const id   = itemId(filePath);
+  const base = path.basename(filePath);
+  const ext  = path.extname(base);
+  const name = ext ? base.slice(0, -ext.length) : base;
+
+  await extractAndSaveIcons(filePath, id, ICONS_DIR);
+
+  const config = loadConfig();
+  // Avoid duplicates
+  if (!config.items.find(i => i.id === id)) {
+    config.items.push({ id, name, path: filePath });
+    saveConfig(config);
   }
+  if (launcherWin && !launcherWin.isDestroyed()) {
+    launcherWin.webContents.send('refresh');
+  }
+  return { id, name, path: filePath, iconDataUrl: readIconDataUrl(id) };
 });
 
 ipcMain.handle('launch-item', async (_, itemPath) => {

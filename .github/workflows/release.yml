@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 permissions:
   contents: write
@@ -25,18 +26,34 @@ jobs:
       - name: Read version from package.json
         id: pkg
         shell: bash
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.ref_name }}" == "dev" ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "tag=v$(node -p "require('./package.json').version")-dev" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Build
+      - name: Build Electron app
         run: bun run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install NSIS
+        run: choco install nsis -y
+
+      - name: Build installer
+        run: makensis /DAPPVERSION=${{ steps.pkg.outputs.version }} scripts\installer.nsi
+
       - name: Create or update release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.pkg.outputs.version }}
-          name: TrayLauncher v${{ steps.pkg.outputs.version }}
+          tag_name: ${{ steps.pkg.outputs.tag }}
+          name: TrayLauncher ${{ steps.pkg.outputs.tag }}
           draft: false
-          prerelease: false
-          files: dist/TrayLauncher-portable.exe
+          prerelease: ${{ steps.pkg.outputs.prerelease }}
+          files: |
+            dist/TrayLauncher-portable.exe
+            dist/TrayLauncher-Setup.exe

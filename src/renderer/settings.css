@@ -137,16 +137,33 @@ body.dark .btn-secondary:hover { background: rgba(96,165,250,0.1); }
 
 .item-row {
   display: grid;
-  grid-template-columns: 28px 1fr auto;
+  grid-template-columns: 18px 28px 1fr auto;
   align-items: center;
   gap: 8px;
   padding: 6px 4px;
   border-radius: 5px;
   border-bottom: 1px solid rgba(0,0,0,0.05);
   transition: background 0.1s;
+  cursor: default;
 }
 .item-row:hover { background: rgba(0,0,0,0.03); }
 .item-row:last-child { border-bottom: none; }
+.item-row.drag-over { background: rgba(0,120,212,0.08); border-color: rgba(0,120,212,0.25); }
+.item-row.dragging { opacity: 0.4; }
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0,0,0,0.25);
+  cursor: grab;
+  font-size: 14px;
+  line-height: 1;
+  user-select: none;
+}
+.drag-handle:active { cursor: grabbing; }
+body.dark .drag-handle { color: rgba(255,255,255,0.2); }
+body.dark .item-row.drag-over { background: rgba(96,165,250,0.1); border-color: rgba(96,165,250,0.3); }
 
 .item-row img {
   width: 24px;

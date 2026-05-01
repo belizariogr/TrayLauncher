@@ -43,15 +43,50 @@ async function renderItems() {
   }
 
   const icons = await Promise.all(config.items.map(item => api.getIcon(item.path)));
-
-  config.items.forEach((item, i) => {
-    list.appendChild(buildRow(item, i, icons[i]));
-  });
+  config.items.forEach((item, i) => list.appendChild(buildRow(item, i, icons[i])));
 }
+
+let dragSrcIndex = null;
 
 function buildRow(item, index, iconSrc) {
   const row = document.createElement('div');
   row.className = 'item-row';
+  row.draggable = true;
+  row.dataset.index = index;
+
+  // Drag handle
+  const handle = document.createElement('span');
+  handle.className = 'drag-handle';
+  handle.innerHTML = '&#8942;&#8942;'; // ⋮⋮
+  handle.title = 'Arrastar para reordenar';
+
+  // Events — only start drag from handle
+  handle.addEventListener('mousedown', () => { row.draggable = true; });
+  row.addEventListener('dragstart', (e) => {
+    dragSrcIndex = index;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => row.classList.add('dragging'), 0);
+  });
+  row.addEventListener('dragend', () => {
+    row.classList.remove('dragging');
+    document.querySelectorAll('.item-row').forEach(r => r.classList.remove('drag-over'));
+  });
+  row.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.item-row').forEach(r => r.classList.remove('drag-over'));
+    row.classList.add('drag-over');
+  });
+  row.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const targetIndex = parseInt(row.dataset.index);
+    if (dragSrcIndex === null || dragSrcIndex === targetIndex) return;
+    const [moved] = config.items.splice(dragSrcIndex, 1);
+    config.items.splice(targetIndex, 0, moved);
+    dragSrcIndex = null;
+    save();
+    renderItems();
+  });
 
   const img = document.createElement('img');
   img.src = iconSrc || fallbackSvg();
@@ -88,6 +123,7 @@ function buildRow(item, index, iconSrc) {
     renderItems();
   });
 
+  row.appendChild(handle);
   row.appendChild(img);
   row.appendChild(info);
   row.appendChild(btnRemove);
